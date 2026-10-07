@@ -7,7 +7,7 @@ struct MesajBasligi {
 	uint32_t magic;
 	uint32_t topic_id;
 	uint32_t sequence;
-	uint32_t payload;
+	uint32_t payload_len;
 
 
 };

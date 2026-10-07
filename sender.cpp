@@ -22,7 +22,7 @@ hedef.sin_family = AF_INET;
 hedef.sin_port = htons(7400);
 inet_pton(AF_INET,"127.0.0.1",&hedef.sin_addr);
 
-std::string mesaj = "merhaba dds";
+std::string payload = "merhaba dds";
 
 MesajBasligi baslik{};
 baslik.magic = MAGIC;
