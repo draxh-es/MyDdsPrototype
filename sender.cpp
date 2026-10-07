@@ -5,6 +5,7 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include "message.hpp"
+#include <cstring>
 
 int main(){
 
