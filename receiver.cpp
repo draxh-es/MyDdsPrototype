@@ -3,6 +3,10 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <unistd.h>
+#include <string>
+#include <cstring>
+#include "message.hpp"
+
 
 
 int main(){
@@ -34,11 +38,13 @@ return 1;
 
 std::cout<<"7400 portu dinleniyor... \n";
 
+while(true){
+
 char tampon[1024];
 sockaddr_in gonderen{};
 socklen_t gonderen_boyut = sizeof(gonderen);
 
-int n = recvfrom(sock,tampon,sizeof(tampon)-1,0,(sockaddr*)&gonderen,&gonderen_boyut);
+int n = recvfrom(sock,tampon,sizeof(tampon),0,(sockaddr*)&gonderen,&gonderen_boyut);
 
 if(n<0){
 
@@ -51,29 +57,47 @@ return 1;
 
 }
 
-tampon[n] = '\0';
+if(n<(int)sizeof(MesajBasligi)){
 
-std::cout<<"gelen mesaj:  "<< tampon<< "\n";
+	std::cerr<<"paket cok kisaa:  "<<n<<"  byte\n";
+	close(sock);
+	return 1;
 
+
+}
+
+MesajBasligi baslik;
+memcpy(&baslik,tampon,sizeof(baslik));
+
+if(baslik.magic != MAGIC){
+
+std::cerr<<"magic yanlis, paket atiliyor\n";
+
+close(sock);
+
+return 1;
+
+}
+
+uint32_t gercek_payload = n- sizeof(baslik);
+
+if(baslik.payload_len != gercek_payload){
+
+	std::cerr<<"payload uzunlugu uyusmuyor\n";
+
+
+	close(sock);
+
+}
+
+std::string metin(tampon + sizeof(baslik), baslik.payload_len);
+
+std::cout<<"topic id :   "<< baslik.topic_id 
+<<"sequence :   "<< baslik.sequence <<
+"payload_len :   "<< baslik.payload_len<<"|" << metin <<"\n";
+}
 
 close(sock);
 return 0;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 }

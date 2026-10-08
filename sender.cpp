@@ -22,7 +22,11 @@ hedef.sin_family = AF_INET;
 hedef.sin_port = htons(7400);
 inet_pton(AF_INET,"127.0.0.1",&hedef.sin_addr);
 
-std::string payload = "merhaba dds";
+uint32_t sayac = 0;
+
+while(true) {
+
+std::string payload = "merhaba dds #"+ std::to_string(sayac);
 
 MesajBasligi baslik{};
 baslik.magic = MAGIC;
@@ -40,16 +44,16 @@ int toplam = sizeof(baslik) + payload.size();
 
 sendto(sock,paket,toplam,0,(sockaddr*)&hedef,sizeof(hedef));
 
-std::cout<< toplam <<"  byte gönderildi\n";
+std::cout<<"gönderildi sequence "<<sayac<<"\n";
 
+sayac++;
+
+sleep(1);
+
+}
 close(sock);
 
-
 return 0;
-
-
-
-
 
 
 }
