@@ -6,10 +6,17 @@
 #include <string>
 #include <cstring>
 #include "message.hpp"
+#include <cstdlib>
 
 
+int main(int argc,char* argv[]){
+if(argc < 2){
+std::cerr<< "kullanım ./receiver <topic_id>\n";
+return 1;
 
-int main(){
+}
+
+uint32_t ilgilenilen_topic = atoi(argv[1]);
 
 int sock = socket(AF_INET,SOCK_DGRAM,0);
 
@@ -36,7 +43,7 @@ return 1;
 
 }
 
-std::cout<<"7400 portu dinleniyor... \n";
+std::cout<<"7400 portu dinleniyor  topic  "<<ilgilenilen_topic<<"\n";
 
 while(true){
 
@@ -85,10 +92,14 @@ if(baslik.payload_len != gercek_payload){
 
 	std::cerr<<"payload uzunlugu uyusmuyor\n";
 
-
 	close(sock);
 
 }
+
+if(baslik.topic_id != ilgilenilen_topic){
+continue;
+}
+
 
 std::string metin(tampon + sizeof(baslik), baslik.payload_len);
 
