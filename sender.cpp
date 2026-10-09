@@ -25,8 +25,10 @@ memcpy(paket+sizeof(baslik),payload.c_str(), payload.size());
 
 int toplam = sizeof(baslik) + payload.size();
 
-
-sendto(sock,paket,toplam,0,(const sockaddr*)&hedef,sizeof(hedef));
+    if (sendto(sock, paket, toplam, 0,
+               (const sockaddr*)&hedef, sizeof(hedef)) < 0) {
+        perror("sendto");
+    }
 
 }
 
@@ -43,8 +45,7 @@ if(sock < 0){
 sockaddr_in hedef{};
 hedef.sin_family = AF_INET;
 hedef.sin_port = htons(7400);
-inet_pton(AF_INET,"127.0.0.1",&hedef.sin_addr);
-
+inet_pton(AF_INET,"239.255.0.1",&hedef.sin_addr);
 uint32_t tur = 0;
 uint32_t seq1 = 0;
 uint32_t seq2 = 0;

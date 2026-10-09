@@ -34,6 +34,17 @@ benim.sin_family = AF_INET;
 benim.sin_port =htons(7400);
 benim.sin_addr.s_addr = INADDR_ANY;
 
+int acik = 1;
+if(setsockopt(sock,SOL_SOCKET,SO_REUSEADDR, &acik,sizeof(acik))<0){
+
+perror("SO_REUSEADDR");
+
+close(sock);
+return 1;
+
+
+}
+
 if(bind(sock,(sockaddr*)&benim,sizeof(benim))<0){
 std::cerr<<"bind basarisiz";
 
@@ -42,6 +53,24 @@ close(sock);
 return 1;
 
 }
+
+ip_mreq grup{};
+
+inet_pton(AF_INET,"239.255.0.1",&grup.imr_multiaddr);
+grup.imr_interface.s_addr = htonl(INADDR_ANY);
+
+
+if(setsockopt(sock,IPPROTO_IP,IP_ADD_MEMBERSHIP,
+		&grup,sizeof(grup))<0){
+
+perror("IP_ADD_MEMBERSHIP");
+close(sock);
+return 1;
+
+
+
+}
+
 
 std::cout<<"7400 portu dinleniyor  topic  "<<ilgilenilen_topic<<"\n";
 
